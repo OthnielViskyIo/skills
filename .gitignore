@@ -22,6 +22,7 @@ coverage
 .vercel
 .idea/
 .junie/
+.claude
 
 # Build Outputs
 .next/
