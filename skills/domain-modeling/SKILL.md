@@ -1,6 +1,16 @@
 ---
 name: domain-modeling
 description: Build and sharpen a project's domain model. Use when the user wants to pin down domain terminology or a ubiquitous language, record an architectural decision, or when another skill needs to maintain the domain model.
+inputs:
+  - topic: "The domain area or concept to model (optional)."
+template: |
+  You are now in domain-modeling mode. Apply the discipline from the skill guide throughout this session.
+
+  1. Check for CONTEXT.md and CONTEXT-MAP.md at the project root to understand existing terminology.
+  2. If [topic] is provided, focus there. Otherwise, ask: "What part of the domain are we modeling?"
+  3. Challenge fuzzy or conflicting terms immediately — propose precise canonical names.
+  4. Update CONTEXT.md as terms are resolved; do not batch them up.
+  5. Offer ADRs only when all three criteria are met: hard to reverse, surprising without context, result of a real trade-off.
 ---
 
 # Domain Modeling

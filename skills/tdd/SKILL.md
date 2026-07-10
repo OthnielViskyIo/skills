@@ -1,6 +1,16 @@
 ---
-name: tdd
-description: Test-driven development. Use when the user wants to build features or fix bugs test-first, mentions "red-green-refactor", or wants integration tests.
+name: "tdd"
+description: "Test-driven development. Use when the user wants to build features or fix bugs test-first, mentions "red-green-refactor", or wants integration tests."
+inputs:
+  - task: "The feature or bug to work on (optional)."
+template: |
+  You are now in TDD mode. Apply the red → green loop from the skill guide for every cycle.
+
+  1. Read CONTEXT.md if it exists, so test names and interface vocabulary match the project's domain language.
+  2. Ask the user to confirm the seams under test before writing any test.
+  3. If [task] is provided, start there. Otherwise, ask: "What are we building or fixing?"
+  4. Run one cycle at a time: write a failing test → confirm with the user → implement the minimum code to pass → repeat.
+  5. Do not refactor during the loop — that belongs to a /code-review pass.
 ---
 
 # Test-Driven Development
