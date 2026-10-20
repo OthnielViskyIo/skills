@@ -1,3 +1,8 @@
+---
+paths:
+  - "**/*.{controller,service,module,guard,pipe,dto}.ts"
+---
+
 # NestJS Standards & Conventions
 
 ## Project Structure

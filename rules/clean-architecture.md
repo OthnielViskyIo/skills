@@ -1,3 +1,8 @@
+---
+paths:
+  - "**/*.ts"
+---
+
 # Clean Architecture Rules
 
 These rules govern Clean Architecture and DDD alignment for TypeScript/Nx backend and service projects. Follow them precisely and without exception unless the user explicitly overrides a specific rule.

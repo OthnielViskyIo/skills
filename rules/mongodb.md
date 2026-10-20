@@ -1,3 +1,9 @@
+---
+paths:
+  - "**/*.{schema,model,repository}.ts"
+  - "**/infrastructure/**"
+---
+
 # MongoDB Rules
 
 These rules govern all MongoDB code generated in this project, whether it uses the official Node.js driver or Mongoose. Follow them precisely and without exception unless the user explicitly overrides a specific rule.

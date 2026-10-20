@@ -1,3 +1,10 @@
+---
+paths:
+  - "**/*.{tsx,jsx}"
+  - "**/app/**"
+  - "next.config.*"
+---
+
 # React & Next.js Rules
 
 These rules govern all React and Next.js code generated in this project. They assume **React 19+** and **Next.js 14+ with the App Router**. Follow them precisely and without exception unless the user explicitly overrides a specific rule.

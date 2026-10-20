@@ -1,3 +1,8 @@
+---
+paths:
+  - "**/*.ts"
+---
+
 # SOLID Principles — Coding Agent Rules
 
 These rules are based on the SOLID design principles introduced by Robert C. Martin ("Uncle Bob").

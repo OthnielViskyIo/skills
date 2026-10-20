@@ -1,3 +1,8 @@
+---
+paths:
+  - "**/*.{ts,tsx}"
+---
+
 # TypeScript Rules
 
 These rules govern all TypeScript code generated in this project. Follow them precisely and without exception unless the user explicitly overrides a specific rule.
