@@ -1,5 +1,5 @@
 ---
-name: pr-flow
+name: "pr-flow"
 description: "Summarize the changes on the current git branch as a short 'flow' for a PR description, so a reviewer gets an overview before reading the diff. Use when the user asks for a flow, a PR overview, or a summary of the branch changes."
 inputs:
   - base: "Branch to compare against (optional). Defaults to the repo's main branch (main or master)."

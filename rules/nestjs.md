@@ -125,6 +125,7 @@ app.useGlobalPipes(
 
 - Use `ClassSerializerInterceptor` to standardize response payload transformation across the application.
 - Annotate entity and response DTO classes with `class-transformer` decorators (`@Exclude()`, `@Expose()`, `@Transform()`) to prevent sensitive data (passwords, tokens, internal flags) from accidentally leaking to clients.
+- Use `@Expose()` only when needed: to apply a default when a value may be `undefined`, `''` or `null` (with `@Transform`), to map an incoming field name to a different internal name, or when the serializer runs with `excludeAll`. Otherwise leave it off.
 - Register `ClassSerializerInterceptor` globally via `APP_INTERCEPTOR` or bind it to specific controllers/handlers returning sensitive models.
 
 ---
