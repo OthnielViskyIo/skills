@@ -22,6 +22,7 @@ Two standing rules:
 1. If [story] is a Jira key or URL, fetch it with the Atlassian MCP: description, acceptance criteria, comments, parent/epic, linked issues and subtasks. The description is often in a custom field ("US Description", "Requirements and Acceptance Criteria"), so fetch all fields with their names. If [story] is pasted text, use it as is and look up any ticket keys it mentions.
 2. Read the parent/epic and sibling tickets to see the whole feature, and where this ticket sits in it.
 3. Search the Obsidian vault (`/Users/othnielvisky/IO_obsidian/luminus`) for the ticket key and the feature, e.g. the pre-refinement note in `<feature>/refinement/` or the user's own notes. Build on what is there and don't repeat it in full.
+   - **Quick notes:** the user may have a quick note directly under `luminus/`, named `DGCO-<number>.md` or just `<number>.md`. It may contain misunderstandings about the feature or about what needs to be done, so check it against the ticket and the code instead of taking it as fact. Point out in the chat where it is wrong.
 4. Look at [project] to see how the flow works today: entry points, steps, data the user enters or sees, and the systems involved. Stay at the level of "what happens", not "how it is coded". Note other repos or teams as moving parts, but don't research them.
 5. List links you can't open (Figma, Confluence, etc.) as references. Don't treat unreadable content as a gap.
 
@@ -75,4 +76,4 @@ Before saving, count the words (e.g. `wc -w`) and check every limit.
 
 ## Output
 
-Save the note, then print its path and the open points in the chat.
+Save the note, then print its path and the open points in the chat. If you used a quick note, ask the user whether it can be deleted, and delete it only if they agree.
