@@ -1,7 +1,6 @@
 ---
 name: "pre-refinement"
-description: "Research a Jira ticket before a refinement meeting: explain what it asks for and find the gaps and unclear points to raise as questions."
-disable-model-invocation: true
+description: "Research a Jira ticket before a refinement meeting: explain what it asks for and find the gaps and unclear points to raise as questions. Use only when the user explicitly writes /pre-refinement; never for a plain mention of the word."
 inputs:
   - ticket: "Jira ticket key or URL (required)."
   - feature: "Feature folder name under luminus/ (optional). Inferred if not given."

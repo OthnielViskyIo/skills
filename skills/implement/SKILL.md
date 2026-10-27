@@ -1,7 +1,6 @@
 ---
 name: "implement"
-description: "Implement a piece of work based on a spec or set of tickets."
-disable-model-invocation: true
+description: "Implement a piece of work based on a spec or set of tickets. Use only when the user explicitly writes /implement; never for a plain mention of the word."
 ---
 
 Implement the work described in the spec or tickets.

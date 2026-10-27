@@ -1,7 +1,6 @@
 ---
 name: "research"
-description: "Research a user story as the first step of implementing it: understand the flow from the user's perspective, all moving parts, and what this ticket covers, then save it as an Obsidian note."
-disable-model-invocation: true
+description: "Research a user story as the first step of implementing it: understand the flow from the user's perspective, all moving parts, and what this ticket covers, then save it as an Obsidian note. Use only when the user explicitly writes /research; never for a plain mention of the word."
 inputs:
   - story: "The user story: Jira key, URL or pasted text (required)."
   - feature: "Feature folder name under luminus/ (optional). Inferred if not given."
