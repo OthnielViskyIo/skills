@@ -57,14 +57,15 @@ Parent/epic, linked tickets, similar past tickets and what they tell us. Referen
 
 ## Questions for refinement
 ### Scope
-- **Question?** Why it matters / what in the ticket or code prompted it.
+1. **Question?** Why it matters / what in the ticket or code prompted it.
 ### Acceptance criteria
-...
+2. ...
 
 ## Assumptions
 What the ticket seems to take for granted and couldn't be confirmed.
 ```
 
+- Questions are a numbered list, numbered continuously across categories so each can be referred to by number.
 - Each question is phrased so it can be asked out loud, followed by one line on why it matters.
 - Order the questions inside a category by how much they block refinement, most blocking first.
 - No padding: a short ticket gets a short note. If the ticket is clear, say so and don't invent questions.

@@ -54,7 +54,7 @@ What this ticket does and what it leaves to other tickets or teams.
 Only if needed: facts about today's code or data that change how the flow or scope should be understood, with file paths. Skip otherwise.
 
 ## Open points
-What is still unclear, and who or what could answer it. Skip if nothing is open.
+A numbered list of what is still unclear, and who or what could answer it. Skip if nothing is open.
 ```
 
 - Separate what the sources state from what you infer, e.g. "(inferred)".

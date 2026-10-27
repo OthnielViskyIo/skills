@@ -39,6 +39,6 @@ Respond with:
 
 1. **Rewritten prompt:** in a single fenced code block, ready to copy.
 2. **What changed:** 3–6 short bullets on the most important changes and why.
-3. **Assumptions / open questions:** anything you inferred or that the user should confirm (omit if none).
+3. **Assumptions / open questions:** a numbered list of anything you inferred or that the user should confirm (omit if none).
 
 Then stop. Only execute the rewritten prompt if the user explicitly asks you to (e.g. "run it", "go").
