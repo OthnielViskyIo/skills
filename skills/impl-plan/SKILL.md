@@ -34,6 +34,10 @@ Close them with `/grilling`: one question at a time, each with your recommended 
 
 The note has no "open points" section. If a decision can't be made yet, stop and tell the user what is blocking, instead of writing a plan with gaps.
 
+## Agree on verification
+
+Once the gaps are closed, propose a numbered list of checks the user can do themselves to confirm the implementation is correct. For example: which endpoint to try in Swagger, with what input and expected response; how to test the flow by hand in the browser; which data to look at in the database. Each item says what to check, how, and what result to expect. Mark the ones you recommend and say why. The user makes the final decision: wait for them to accept, drop, change or add items, and only put the agreed list in the note.
+
 ## Name and location
 
 - **Feature:** use [feature] if given. Otherwise, match an existing folder under `luminus/` (e.g. `boiler-maintenance`, `scenario-chooser`) to the ticket's parent/epic. If none fits, propose a kebab-case name and ask the user before creating it.
@@ -62,13 +66,16 @@ What exists when the plan is done, in 2-4 sentences: the behavior, and the contr
 1. **Slice name.** The behavior this slice adds, the files it creates or changes, and the existing pattern to follow. Seam: where it is tested and the cases that prove it.
 2. ...
 
-## Verify
-The commands to run (tests, typecheck, lint, build) and any manual check.
+## Verification
+1. A check agreed with the user: what to check, how, and the expected result.
+2. ...
 
 ## Definition of done
-- [ ] Checkable outcome
+- [ ] A check the implementer runs to confirm their own work, e.g. a command (tests, typecheck, lint, build) and the result it must give
 ```
 
+- **Verification** is for the user: manual checks to confirm the implementation is correct, as agreed in "Agree on verification".
+- **Definition of done** is for the implementer: the checks to run before calling the work finished. You set these yourself; they don't need the user's agreement.
 - **Steps** are ordered so each one builds on the previous and leaves the code working. Each step is one `/tdd` slice or a small group of them, at a seam confirmed during grilling. Steps that aren't test-driven (config, wiring, migrations) say how they are verified instead.
 - **Precise, not verbose:** name files, functions, types, routes and values exactly. Leave out anything the implementer doesn't need to decide or find.
 - **Code** only where it removes ambiguity that words can't, e.g. a contract or a signature. No implementations.
