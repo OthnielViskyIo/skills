@@ -63,7 +63,11 @@ Parent/epic, linked tickets, similar past tickets and what they tell us. Referen
 
 ## Assumptions
 What the ticket seems to take for granted and couldn't be confirmed.
+
+## Refinement notes
 ```
+
+- Leave **Refinement notes** empty: the user fills it in during the refinement meeting.
 
 - Questions are a numbered list, numbered continuously across categories so each can be referred to by number.
 - Each question is phrased so it can be asked out loud, followed by one line on why it matters.
