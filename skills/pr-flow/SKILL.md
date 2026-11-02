@@ -33,6 +33,7 @@ Start at the entry point (endpoint, page, job, CLI command) and follow the path 
 - Describe what each piece does in the flow and the decisions that matter (short-circuits, priorities, what is shared or reused, what is deliberately left alone). Leave out the details the diff already shows.
 - Skip tests, lockfiles, version bumps and pure renames, unless they are the point of the change.
 - State only what the code does. If something looks unintended, raise it with the user after the flow, not inside it.
+- **Current state only:** describe the code as it is on the branch. No history or provenance: no "Updated <date>", no "from the <X> code" or "according to <page>", no "the code wins over…", "previously", "changed from", strikethroughs or change logs.
 
 ## Length limits
 
@@ -45,6 +46,10 @@ Count words, not characters: long identifiers would distort a character count.
 - If the branch can't be described in 250 words, write the best 250-word flow you can and tell the user the PR may be worth splitting. Never go over the cap.
 
 Before printing, count the words (e.g. `wc -w`) and check every limit.
+
+## Revising the flow
+
+When the user asks to update, revise or refactor the flow, or the branch changes, print the full corrected flow: drop the old or wrong content and write the correct version as if it had always been so. The current-state rule above applies to every revision. Re-check the length limits.
 
 ## Output
 

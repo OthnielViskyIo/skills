@@ -42,7 +42,7 @@ Once the gaps are closed, propose a numbered list of checks the user can do them
 
 - **Feature:** use [feature] if given. Otherwise, match an existing folder under `luminus/` (e.g. `boiler-maintenance`, `scenario-chooser`) to the ticket's parent/epic. If none fits, propose a kebab-case name and ask the user before creating it.
 - **Note name:** `<KEY> - <short summary in lowercase>.md`: the ticket key plus a few words on what the plan delivers, e.g. `DGCO-3666 - scenario chooser endpoint.md`. For several tickets in one plan: `<KEY> and <KEY> - <summary>.md`.
-- **Path:** `/Users/othnielvisky/IO_obsidian/luminus/<feature>/plans/<note name>`. Create the `plans` folder if needed. Ask before overwriting an existing file.
+- **Path:** `/Users/othnielvisky/IO_obsidian/luminus/<feature>/plans/<note name>`. Create the `plans` folder if needed. Ask before overwriting an existing file, unless you are revising this note at the user's request.
 
 ## Write the note
 
@@ -60,7 +60,7 @@ Implementation plan for **<KEY>: <ticket title>**. Builds on [[<research note>]]
 What exists when the plan is done, in 2-4 sentences: the behavior, and the contract (endpoint, component, function signature) if there is one.
 
 ## Decisions
-- **Decision.** Why, and where it was made (ticket, research note, grilling on <date>).
+- **Decision.** Why, in one sentence.
 
 ## Steps
 1. **Slice name.** The behavior this slice adds, the files it creates or changes, and the existing pattern to follow. Seam: where it is tested and the cases that prove it.
@@ -80,7 +80,7 @@ What exists when the plan is done, in 2-4 sentences: the behavior, and the contr
 - **Precise, not verbose:** name files, functions, types, routes and values exactly. Leave out anything the implementer doesn't need to decide or find.
 - **Code** only where it removes ambiguity that words can't, e.g. a contract or a signature. No implementations.
 - If the user said not to use `/tdd`, drop the seams from the steps and describe how each step is verified.
-- Every decision traces back to its source. Mark anything still inferred with "(inferred)" and confirm it during grilling before saving.
+- **Current state only:** write every fact, decision and step as it stands, as a direct statement. No history or provenance: no "Updated <date>", no "from the <X> code" or "according to <page>", no "the code wins over…", "previously", "changed from", strikethroughs or change logs. Mark anything still inferred with "(inferred)" and confirm it during grilling before saving.
 
 ## Length limits
 
@@ -93,6 +93,10 @@ Count words, not characters: file paths and identifiers would distort a characte
 - Never go over the cap. If the plan can't fit in 800 words, the ticket is probably too big: propose how to split it into separate plans.
 
 Before saving, count the words (e.g. `wc -w`) and check every limit.
+
+## Revising the note
+
+When the user asks to update, revise or refactor the note, or new information or answers change it, rewrite the affected parts in place: delete the old or wrong content and write the correct version as if it had always been so. The note shows only the current plan. The current-state rule above applies to every revision. Re-check the length limits before saving.
 
 ## Output
 

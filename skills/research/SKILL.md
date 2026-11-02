@@ -31,7 +31,7 @@ If a gap can't be closed from these sources, keep it as an open point. Don't gue
 
 - **Feature:** use [feature] if given. Otherwise match an existing folder under `luminus/` (e.g. `boiler-maintenance`, `scenario-chooser`) to the ticket's parent/epic. If none fits, propose a kebab-case name and ask the user before creating it.
 - **Note name:** `<KEY> - <short summary in lowercase>.md`: the ticket key plus a few words on what the ticket is about, e.g. `DGCO-3561 - set up your service page: see content of service.md`.
-- **Path:** `/Users/othnielvisky/IO_obsidian/luminus/<feature>/research/<note name>`. Create the `research` folder if needed. Ask before overwriting an existing file.
+- **Path:** `/Users/othnielvisky/IO_obsidian/luminus/<feature>/research/<note name>`. Create the `research` folder if needed. Ask before overwriting an existing file, unless you are revising this note at the user's request.
 
 ## Write the note
 
@@ -60,6 +60,7 @@ A numbered list of what is still unclear, and who or what could answer it. Skip 
 - Separate what the sources state from what you infer, e.g. "(inferred)".
 - Write in plain language. A product owner should be able to follow everything except the technical remarks.
 - No padding: a small ticket gets a small note.
+- **Current state only:** write every fact as it stands, as a direct statement. No history or provenance: no "Updated <date>", no "from the <X> code" or "according to <page>", no "the code wins over…", "previously", "changed from", strikethroughs or change logs.
 
 ## Length limits
 
@@ -72,6 +73,10 @@ Count words, not characters: file paths and identifiers would distort a characte
 - Never go over the cap. If the ticket can't be covered in 500 words, it is probably too big: say so in the summary.
 
 Before saving, count the words (e.g. `wc -w`) and check every limit.
+
+## Revising the note
+
+When the user asks to update, revise or refactor the note, or new information changes it, rewrite the affected parts in place: delete the old or wrong content and write the correct version as if it had always been so. The note shows only the current understanding. The current-state rule above applies to every revision. Re-check the length limits before saving.
 
 ## Output
 
