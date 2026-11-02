@@ -111,10 +111,39 @@ const [items, setItems] = useState<Item[]>([]);
 const count = items.length;
 ```
 
+- Before adding a `useState`, check whether existing state can already drive the behaviour: your own state, props, or state exposed by a hook (React Query/SWR `isPending`/`isError`/`error`/`data`, react-hook-form `formState`, `useActionState`, `useFormStatus`, `useTransition`'s `isPending`). Use that state directly. Do not mirror it in a new local variable that is set by hand in handlers or `try`/`catch`.
+
+```tsx
+// ❌ local flag duplicating what the mutation already tracks
+const { mutateAsync } = useSaveContactDetails();
+const [saveFailed, setSaveFailed] = useState(false);
+
+async function onSubmit(values: ContactDetails) {
+  setSaveFailed(false);
+  try {
+    await mutateAsync(values);
+  } catch {
+    setSaveFailed(true);
+  }
+}
+
+return saveFailed && <Alert severity="error">{t("error-save")}</Alert>;
+```
+```tsx
+// ✅ the mutation's own flag drives the UI
+const { mutateAsync, isError } = useSaveContactDetails();
+
+async function onSubmit(values: ContactDetails) {
+  await mutateAsync(values);
+}
+
+return isError && <Alert severity="error">{t("error-save")}</Alert>;
+```
+
 - Update state **immutably**. Use spread, `map`, `filter`, `toSorted`/`toSpliced`, or an immutability helper. Never `push`, `splice`, or assign into existing state.
 - Use the **updater form** (`setCount(c => c + 1)`) whenever the next value depends on the previous one.
 - Group state that always changes together into one object or `useReducer`. Reach for `useReducer` when there are more than ~3 interdependent transitions.
-- Avoid contradictory state (`isLoading` + `isError` + `data` booleans). Model it as a discriminated union (`rules/typescript.md` §8).
+- Avoid contradictory state you own (separate `isLoading` + `isError` + `data` `useState`s). Model it as a discriminated union (`rules/typescript.md` §8). This does not apply to status flags a library hook already returns (e.g. React Query's `isError`): use those as they are.
 - Lift state to the closest common ancestor — no higher. Do not hoist state into a global store to avoid passing one prop.
 - Reset child state by changing its `key`, not by an effect that watches a prop.
 - Do not duplicate props into state (`useState(props.value)`) unless you deliberately want an uncontrolled initial value; name it `initialValue` if so.
@@ -307,6 +336,7 @@ export async function updateProfile(formData: FormData): Promise<ActionResult> {
 - Never mutate props, state, context values, or the DOM outside refs/effects.
 - Never use array indices as keys for dynamic lists.
 - Never use an Effect to synchronise state that can be derived.
+- Never add local state that duplicates state already available from props, existing state, or a hook (e.g. a `saveFailed` flag next to a mutation's `isError`).
 - Never leak secrets through `NEXT_PUBLIC_*` or through props passed to Client Components.
 - Never add `"use client"` to a shared utility, type, or barrel module.
 - Never use `React.<Something>` namespace access; import types, hooks, and utilities directly from `"react"` (e.g. `import { useState, type ReactNode } from "react"`).
