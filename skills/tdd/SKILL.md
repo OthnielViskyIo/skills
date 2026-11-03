@@ -5,7 +5,7 @@ description: "Test-driven development. Use when the user wants to build features
 
 TDD is the red → green loop. This skill is the reference that makes that loop produce tests worth keeping: what a good test is, where tests go, the anti-patterns, and the rules of the loop. Every section applies on every cycle: consult them before and during the loop, not after.
 
-When exploring the codebase, read `GLOSSARY.md` (if it exists) so test names and interface vocabulary match the project's domain language, and respect ADRs in the area you're touching.
+When exploring the codebase, read the glossary at `/Users/othnielvisky/IO_obsidian/luminus/GLOSSARY.md` (if it exists) so test names and interface vocabulary match the domain language, and respect the ADRs in `/Users/othnielvisky/IO_obsidian/luminus/adr/` in the area you're touching. Where a term lists `_In code_` names, keep using the existing code name in code that already uses it.
 
 ## What a good test is
 

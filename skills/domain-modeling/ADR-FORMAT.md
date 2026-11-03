@@ -1,16 +1,14 @@
 # ADR Format
 
-ADRs live in `docs/adr/` and use sequential numbering: `0001-slug.md`, `0002-slug.md`, etc.
+ADRs live in the Obsidian vault at `/Users/othnielvisky/IO_obsidian/luminus/adr/` and use sequential numbering: `0001-slug.md`, `0002-slug.md`, etc. Create the folder when the first ADR is needed.
 
 ## Template
 
 ```md
-# {Short title of the decision}
-
 {1-3 sentences: what's the context, what did we decide, and why.}
 ```
 
-That's it. An ADR can be a single paragraph. The value is in recording *that* a decision was made and *why*, not in filling out sections.
+No H1: Obsidian shows the file name as the title, so make the slug a readable short title of the decision. That's it. An ADR can be a single paragraph. The value is in recording *that* a decision was made and *why*, not in filling out sections.
 
 ## Optional sections
 
@@ -22,7 +20,7 @@ Only include these when they add genuine value. Most ADRs won't need them.
 
 ## Numbering
 
-Scan `docs/adr/` for the highest existing number and increment by one.
+Scan `luminus/adr/` for the highest existing number and increment by one.
 
 ## What qualifies
 
@@ -34,4 +32,5 @@ Examples of decisions that meet the three criteria in [SKILL.md](./SKILL.md):
 - **Boundary and scope decisions.** "Customer data is owned by the Customer context; other contexts reference it by ID only." The explicit no-s are as valuable as the yes-s.
 - **Deliberate deviations from the obvious path.** "We're using manual SQL instead of an ORM because X." Anything where a reasonable reader would assume the opposite. These stop the next engineer from "fixing" something that was deliberate.
 - **Constraints not visible in the code.** "We can't use AWS because of compliance requirements." "Response times must be under 200ms because of the partner API contract."
-- **Rejected alternatives when the rejection is non-obvious.** If you considered GraphQL and picked REST for subtle reasons, record it. Otherwise someone will suggest GraphQL again in six months.
+- **Settling an inconsistency we can't fix in code.** "We keep `contactDetails` in the OCO service as an alias of Contract Details, because another team owns the service." "OCO has its own view of Customer and is modeled as a separate bounded context."
+- **Rejected alternatives when the rejection is non-obvious.** If you considered GraphQL and picked REST for subtle reasons, record it. Otherwise, someone will suggest GraphQL again in six months.
