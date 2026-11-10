@@ -61,7 +61,8 @@ function greet(name: string): string {
 
 ## 5. `interface` vs `type`
 
-- Use `interface` for object shapes that represent a named concept, especially domain entities, value objects, and repository contracts. Interfaces are extendable and produce cleaner error messages.
+- Use `interface` for object shapes that represent a named concept, especially domain entities and value objects. Interfaces are extendable and produce cleaner error messages.
+- Contracts used as dependency injection tokens (repository ports, service contracts) are abstract classes, not interfaces — see §16.
 - Use `type` for unions, intersections, mapped types, conditional types, and aliases for primitives.
 - Never use `interface` to rename primitives.
 
@@ -236,7 +237,8 @@ type Direction = "north" | "south";
 - Use `readonly` on class properties that are set only in the constructor.
 - Prefer `private` declarations for encapsulation; use `#privateField` syntax when true runtime privacy is needed.
 - Avoid `public` as an explicit modifier — it is the default and adds noise.
-- Do not use abstract classes as a substitute for interfaces; reserve them for template method patterns where a concrete partial implementation exists.
+- Use abstract classes with only abstract members for contracts used as dependency injection tokens (repository ports, service contracts): they survive compilation, so NestJS can inject them by type (see `rules/nestjs.md` §Providers & Dependency Injection).
+- Otherwise, do not use abstract classes as a substitute for interfaces; reserve them for template method patterns where a concrete partial implementation exists.
 
 ---
 

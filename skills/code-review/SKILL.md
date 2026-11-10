@@ -21,9 +21,9 @@ rules:
 - name: "SOLID"
   path: "../../rules/solid.md"
   applies_to: "All code."
-- name: "Clean Architecture"
-  path: "../../rules/clean-architecture.md"
-  applies_to: "Backend and service projects (e.g. NestJS, Nx libs with domain/application/infrastructure layers)."
+- name: "N-Layered Architecture"
+  path: "../../rules/n-layered-architecture.md"
+  applies_to: "NestJS backend and service projects (presentation/application/domain/infrastructure layers)."
 ---
 
 Perform a code review on [code] with respect to the selected stack(s).

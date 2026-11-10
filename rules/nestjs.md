@@ -222,7 +222,12 @@ throw new BadRequestException('Password too weak', { errorCode: 'WEAK_PASSWORD' 
 
 ## Testing
 
-- Unit test services in isolation by mocking all dependencies using custom providers with `useValue: mockService`.
+- Unit test each provider (controllers, use cases, services, repositories, guards, pipes) in isolation by mocking **all** injected dependencies using custom providers with `useValue: mockService`. This includes Mongoose models, provided via `getModelToken(Model.name)`.
 - Use `Test.createTestingModule()` from `@nestjs/testing` for all Nest-aware tests.
+- Retrieve the unit under test and its mocks from the compiled module: `module.get<ServiceType>(ServiceClass)`.
+- Set up mock behavior with `jest.spyOn(mockService, 'method').mockResolvedValue(...)` — never call `.mockResolvedValue()` directly on the mock object. Never type mocks as `jest.Mocked<T>`.
+- Mock only what each test needs; keep mocks minimal and readable.
+- Assert the full call payloads sent to mocked dependencies where feasible, including query filters and nested objects.
+- Use `beforeEach` for fresh instances; `beforeAll` only for setup that does not hold state.
 - End-to-end test controllers via `supertest` on the full Nest app, not by calling controller methods directly.
 - Prefer injecting mock providers over patching module internals at test time.

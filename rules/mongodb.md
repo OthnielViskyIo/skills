@@ -8,7 +8,7 @@ paths:
 
 These rules govern all MongoDB code generated in this project, whether it uses the official Node.js driver or Mongoose. Follow them precisely and without exception unless the user explicitly overrides a specific rule.
 
-`rules/typescript.md` applies in full to all database code. `rules/clean-architecture.md` decides **where** database code lives: schemas, models, and repository implementations belong in `infrastructure/`, behind repository ports defined in the domain. This document covers **how** that code is written.
+`rules/typescript.md` applies in full to all database code. `rules/n-layered-architecture.md` decides **where** database code lives: schemas, models, and repository implementations belong in `infrastructure/`, behind repository ports defined in `application/ports/`. This document covers **how** that code is written.
 
 ---
 
@@ -223,9 +223,11 @@ try {
 
 ## 13. Testing
 
-- Test repositories against a real MongoDB (`mongodb-memory-server` or a Testcontainers instance), not a mocked driver. Mocks cannot catch wrong filters, missing indexes, or validation errors.
-- Isolate tests: clear collections or use a fresh database per test file.
-- Assert on the stored documents, not only on the return value.
+- Unit test repositories with the Mongoose model mocked, following `rules/nestjs.md` §Testing (provide it via `getModelToken(Model.name)`).
+- Assert the exact query filter, update document and options (e.g. `runValidators: true`, `new: true`) passed to the model, not only the return value.
+- Build the documents a mock returns with the real schema (`new SessionModel({...})`), so mapping runs against real hydrated documents.
+- Cover the missing-record path (the model resolves `null`) for every update.
+- Isolate tests: reset mocks between tests.
 - Follow `/tdd` for non-trivial repository logic.
 
 ---

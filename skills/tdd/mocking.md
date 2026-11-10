@@ -1,17 +1,8 @@
 # When to Mock
 
-Mock at **system boundaries** only:
+**NestJS backends:** a unit test mocks **every** injected dependency of the unit under test, including your own use cases, services, repositories and Mongoose models. Follow `rules/nestjs.md` §Testing for how (`useValue` providers, `jest.spyOn`, no `jest.Mocked`). Freeze time with fake timers.
 
-- External APIs (payment, email, etc.)
-- Databases (sometimes - prefer test DB)
-- Time/randomness
-- File system (sometimes)
-
-Don't mock:
-
-- Your own classes/modules
-- Internal collaborators
-- Anything you control
+**Frontend code:** follow `rules/react-next.md` §18 Testing (mock at the network boundary).
 
 ## Designing for Mockability
 

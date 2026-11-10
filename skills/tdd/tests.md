@@ -2,7 +2,7 @@
 
 ## Good Tests
 
-**Integration-style**: Test through real interfaces, not mocks of internal parts.
+**Behavior-focused**: Test through the public interface of the unit under test.
 
 ```typescript
 // GOOD: Tests observable behavior
@@ -27,19 +27,20 @@ Characteristics:
 **Implementation-detail tests**: Coupled to internal structure.
 
 ```typescript
-// BAD: Tests implementation details
-test("checkout calls paymentService.process", async () => {
-  const mockPayment = jest.mock(paymentService);
-  await checkout(cart, payment);
-  expect(mockPayment.process).toHaveBeenCalledWith(cart.total);
+// BAD: Spies on the unit's own private method
+test("checkout calls calculateTotal", async () => {
+  const spy = jest.spyOn(checkoutService as any, "calculateTotal");
+  await checkoutService.checkout(cart, payment);
+  expect(spy).toHaveBeenCalled();
 });
 ```
 
+Asserting the exact payload sent to a **mocked injected dependency** is expected in NestJS unit tests, not a red flag (see `rules/nestjs.md` §Testing).
+
 Red flags:
 
-- Mocking internal collaborators
-- Testing private methods
-- Asserting on call counts/order
+- Testing private methods or spying on the unit's own methods
+- Asserting a call happened without asserting its payload
 - Test breaks when refactoring without behavior change
 - Test name describes HOW not WHAT
 - Verifying through external means instead of interface
