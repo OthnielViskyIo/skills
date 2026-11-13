@@ -21,11 +21,12 @@ All files live in the Obsidian vault, not in the project repo:
 
 ```
 /Users/othnielvisky/IO_obsidian/luminus/
-├── GLOSSARY.md        ← ubiquitous language, all bounded contexts
-├── MODEL.md           ← domain model: text + mermaid diagrams
-└── adr/
-    ├── 0001-slug.md
-    └── 0002-slug.md
+└── ddd/
+    ├── GLOSSARY.md    ← ubiquitous language, all bounded contexts
+    ├── MODEL.md       ← domain model: text + mermaid diagrams
+    └── adr/
+        ├── 0001-slug.md
+        └── 0002-slug.md
 ```
 
 - [GLOSSARY.md](./GLOSSARY-FORMAT.md): one file for all luminus applications, grouped by bounded context.
@@ -38,7 +39,7 @@ Create files lazily, when you have something to write. Obsidian conventions appl
 
 The glossary and the model grow over many sessions, one area at a time (a feature, a flow, an application). Never try to model everything at once.
 
-1. **Start from what exists.** Read `GLOSSARY.md`, `MODEL.md` and `adr/` before anything else. Use their terms, and build on them.
+1. **Start from what exists.** Read `ddd/GLOSSARY.md`, `ddd/MODEL.md` and `ddd/adr/` before anything else. Use their terms, and build on them.
 2. **Agree on the area.** Agree with the user on which area this session covers, and stick to it. Note anything outside it as a follow-up instead of chasing it.
 3. **Dig into the code.** Read the code for the area across every layer (see below), and collect candidate terms, concepts and inconsistencies.
 4. **Settle with the user.** Go through the findings with the user. Write each term or model fact as soon as it is settled. Don't save them up for the end.

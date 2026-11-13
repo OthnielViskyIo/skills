@@ -1,6 +1,6 @@
 # GLOSSARY.md Format
 
-The glossary is the ubiquitous language of all luminus applications. It lives at `/Users/othnielvisky/IO_obsidian/luminus/GLOSSARY.md`.
+The glossary is the ubiquitous language of all luminus applications. It lives at `/Users/othnielvisky/IO_obsidian/luminus/ddd/GLOSSARY.md`.
 
 ## Structure
 

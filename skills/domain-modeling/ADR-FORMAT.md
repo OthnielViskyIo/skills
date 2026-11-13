@@ -1,6 +1,6 @@
 # ADR Format
 
-ADRs live in the Obsidian vault at `/Users/othnielvisky/IO_obsidian/luminus/adr/` and use sequential numbering: `0001-slug.md`, `0002-slug.md`, etc. Create the folder when the first ADR is needed.
+ADRs live in the Obsidian vault at `/Users/othnielvisky/IO_obsidian/luminus/ddd/adr/` and use sequential numbering: `0001-slug.md`, `0002-slug.md`, etc. Create the folder when the first ADR is needed.
 
 ## Template
 
@@ -20,7 +20,7 @@ Only include these when they add genuine value. Most ADRs won't need them.
 
 ## Numbering
 
-Scan `luminus/adr/` for the highest existing number and increment by one.
+Scan `luminus/ddd/adr/` for the highest existing number and increment by one.
 
 ## What qualifies
 

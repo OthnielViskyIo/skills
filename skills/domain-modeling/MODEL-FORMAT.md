@@ -1,6 +1,6 @@
 # MODEL.md Format
 
-The model is the DDD domain model of the luminus applications. It lives at `/Users/othnielvisky/IO_obsidian/luminus/MODEL.md`. It grows one area at a time, so sections can be empty or incomplete for a long while. That's expected.
+The model is the DDD domain model of the luminus applications. It lives at `/Users/othnielvisky/IO_obsidian/luminus/ddd/MODEL.md`. It grows one area at a time, so sections can be empty or incomplete for a long while. That's expected.
 
 ## Structure
 
