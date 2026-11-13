@@ -16,7 +16,7 @@ This is planning only: don't edit code, change the ticket or post to Jira. Leave
 Two standing rules:
 
 - **No estimates or sprints:** Never look at, or add to the note, story points or the sprint the ticket belongs to, unless the user explicitly asks.
-- **Segments:** Assume the ticket covers both residential and professional. Only treat them separately if the ticket describes differences, or if the user asks.
+- **Segments:** Assume the ticket covers both residential and professional, unless the ticket or the user limits it to one. A change to existing functionality goes to both segments in the same way: don't split it by segment unless the ticket describes a difference. New functionality must be designed for both segments from the start, with their differences. Professional has fields residential doesn't have (such as company name and company number): give those their own fields instead of reusing the residential ones. Check the code for how the segments already differ in the area.
 
 ## Gather the context
 

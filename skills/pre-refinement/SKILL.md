@@ -14,7 +14,7 @@ This is research only. Don't edit code, write a plan, or propose an implementati
 Two standing rules:
 
 - **No estimates or sprints:** Never look at, or add to the note, story points or the sprint the ticket belongs to, unless the user explicitly asks.
-- **Segments:** Assume the ticket covers both residential and professional, and never ask which one is in scope. Only treat them separately if the ticket describes differences, or if the user asks.
+- **Segments:** Assume the ticket covers both residential and professional, unless the ticket or the user limits it to one. Never ask which one is in scope. A change to existing functionality goes to both segments in the same way: don't split it by segment unless the ticket describes a difference. New functionality must be designed for both segments from the start, with their differences. Professional has fields residential doesn't have (such as company name and company number): give those their own fields instead of reusing the residential ones. Check the code for how the segments already differ in the area. For new functionality, raise it as a gap if it's unclear how the segments differ.
 
 ## Gather the context
 
