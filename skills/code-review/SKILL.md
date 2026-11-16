@@ -21,15 +21,15 @@ rules:
 - name: "SOLID"
   path: "../../rules/solid.md"
   applies_to: "All code."
-- name: "N-Layered Architecture"
-  path: "../../rules/n-layered-architecture.md"
-  applies_to: "NestJS backend and service projects (presentation/application/domain/infrastructure layers)."
+- name: "Luminus"
+  path: "../../rules/luminus.md"
+  applies_to: "All code in luminus projects (repositories under /Users/othnielvisky/work/luminus/). Overrides the other rules files where they disagree."
 ---
 
 Perform a code review on [code] with respect to the selected stack(s).
 
 1. Identify the tech stack in use (React, TypeScript, Next.js, NestJS, MongoDB).
-2. Select every rules file whose `applies_to` matches the code. If multiple apply, note concerns that span several files only once, under the most relevant one.
+2. Select every rules file whose `applies_to` matches the code. If multiple apply, note concerns that span several files only once, under the most relevant one. In a luminus project, where `luminus.md` overrides a rule of another file, cite both. Show the standard way and the luminus way with a code example each, plus the tradeoffs, and let the user decide. Don't pick one yourself.
 3. Read each selected rules file in full before generating findings. Review against the rules as written: do not substitute general best practices where a rule says otherwise.
 4. Pay special attention to [focus], if given.
 5. Assign a severity level to each finding:

@@ -1,6 +1,6 @@
 # When to Mock
 
-**NestJS backends:** a unit test mocks **every** injected dependency of the unit under test, including your own use cases, services, repositories and Mongoose models. Follow `rules/nestjs.md` §Testing for how (`useValue` providers, `jest.spyOn`, no `jest.Mocked`). Freeze time with fake timers.
+**NestJS backends:** a unit test mocks **every** injected dependency of the unit under test, including your own use cases, services, repositories and Mongoose models. Follow `rules/nestjs.md` §Testing and, in luminus projects, `rules/luminus.md` §3 for how (`useValue` providers, `jest.spyOn`, no `jest.Mocked`). Freeze time with fake timers.
 
 **Frontend code:** follow `rules/react-next.md` §18 Testing (mock at the network boundary).
 

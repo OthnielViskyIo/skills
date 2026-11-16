@@ -35,7 +35,7 @@ test("checkout calls calculateTotal", async () => {
 });
 ```
 
-Asserting the exact payload sent to a **mocked injected dependency** is expected in NestJS unit tests, not a red flag (see `rules/nestjs.md` §Testing).
+Asserting the exact payload sent to a **mocked injected dependency** is expected in NestJS unit tests, not a red flag (see `rules/luminus.md` §3).
 
 Red flags:
 

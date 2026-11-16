@@ -1,20 +1,124 @@
+# Luminus Rules
+
+These rules apply **only to luminus projects**: the repositories under `/Users/othnielvisky/work/luminus/`. Ignore this file everywhere else.
+
+In a luminus project, this file **overrides** the technology rules files (`typescript.md`, `nestjs.md`, `mongodb.md`, `react-next.md`, `solid.md`). Those files hold the standard rules from the official docs and common best practice. Each section names the rules it overrides. Rules that this file doesn't mention still apply as written.
+
+**Before applying an override, ask the user which way to go.** Explain the standard way and the luminus way, each with a code example, plus the tradeoffs. See "Luminus overrides" in `~/.claude/CLAUDE.md`.
+
 ---
-paths:
-  - "**/*.ts"
+
+## 1. No Optional Properties
+
+Overrides: `typescript.md` §10, `nestjs.md` §DTOs & Validation (`PartialType`), §OpenAPI & Swagger (`@ApiPropertyOptional()`) and §Pipes (`DefaultValuePipe`), `mongodb.md` §3, and `react-next.md` §3 (optional props).
+
+### 1.1 TypeScript
+
+- **Do not write optional properties (`prop?: T`).** Give every property a sensible default instead (`''`, `[]`, `0`, `false`, an explicit enum member such as `'NONE'`), and make the type required.
+- Don't get around this with `prop: T | undefined`, `Partial<T>` or a type that only adds the field in some cases. Those are optionals too.
+- When variants differ (e.g. one segment has fields the other lacks), prefer one shape that always has every field, with the field defaulted where it doesn't apply, over separate variants with optional fields. This is the case even if the field has no meaning for some variants.
+- Set the default **once, at the boundary** where data comes in (request DTO, response of an external API, database read). From there inward the type is required and the code needs no `??` or `?.` for that field.
+- When an external source may leave a field out, type only the raw response as partial, and map it straight away to the required internal type:
+
+```typescript
+// ❌ optional leaks into the domain, every reader needs ?? '' or ?.
+interface ContactDetails {
+  firstName: string;
+  companyName?: string; // professional only
+}
+
+// ✅ always present, '' when it doesn't apply
+interface ContactDetails {
+  firstName: string;
+  companyName: string; // '' when not entered
+}
+
+// ✅ the external API may leave contactPersons out: default it at the boundary
+const raw = await fetchCustomer(customerNumber); // Omit<Customer, 'contactPersons'> & Partial<Pick<Customer, 'contactPersons'>>
+return { ...raw, contactPersons: raw.contactPersons ?? [] };
+```
+
+- The same goes for parameters. Use a default value (`limit = 20`) instead of `limit?: number`.
+- An optional property is only acceptable when no sensible default exists, and you can't restructure the type to avoid it. **Ask the user before adding one**, and explain why a default doesn't work.
+- Not covered: a function that returns `T | undefined` for "nothing found" (e.g. `array.find`), types from libraries you don't control, and React props that are destructured with a default (§1.4).
+
+### 1.2 NestJS DTOs
+
+- §1.1 applies to request and response DTOs too: no `prop?: T`, no `@IsOptional()`, no `@ApiPropertyOptional()`, no `@ValidateIf` to skip a missing field. Declare the property as required, accept it being left out or empty, and fill in a default with `@Transform`. Document the default in `@ApiProperty({ default })`:
+
+```ts
+// ❌
+@ApiPropertyOptional()
+@IsOptional()
+@IsString()
+companyName?: string;
+
+// ✅ always present on the DTO, '' when the client doesn't send it
+@ApiProperty({ default: '' })
+@Expose()
+@Transform(({ value }: { value: unknown }) => value ?? '')
+@IsString()
+@MaxLength(80)
+companyName!: string;
+```
+
+- Use `@Expose()` only when needed: to apply a default when a value may be `undefined`, `''` or `null` (with `@Transform`), to map an incoming field name to a different internal name, or when the serializer runs with `excludeAll`. Otherwise, leave it off.
+- When DTO variants differ (e.g. per segment), make every variant accept every field with the same default. Tighten validation only in the variant that needs the field (e.g. `@Length(10)` for professionals) by redeclaring it with `declare`. Don't leave the field out of the other variants.
+- Response DTOs always contain every field, with the default where it doesn't apply.
+- Don't derive DTOs with `PartialType` (it makes every field optional) without asking the user first. `PickType`, `OmitType` and `IntersectionType` are fine.
+- Every query parameter that may be left out gets a default with `DefaultValuePipe`.
+- An optional DTO property is only acceptable when no sensible default exists, e.g. a PATCH where a missing field must mean "don't change" and no default value can express that. Ask the user first.
+
+### 1.3 MongoDB
+
+- Give each field that may be left out a schema `default` (`''`, `[]`, `false`, ...), so that it is required in the document interface.
+- When documents written before the field existed don't have it, default it in the repository on read.
+- Ask the user before leaving a field optional.
+
+### 1.4 React props
+
+- A prop of our own components may be optional (`variant?:`) **only** if the component destructures it with a default value (`{ variant = "primary" }`). An optional prop without a default needs the user's approval first.
+- Native props inherited from `ComponentPropsWithRef` are not covered.
+
 ---
 
-# N-Layered Architecture Rules
+## 2. DI Contracts Are Abstract Classes
 
-These rules govern the layering of NestJS backend services. Follow them precisely unless the user explicitly overrides a specific rule.
+Overrides: `typescript.md` §5 (interfaces for repository contracts) and §16 (abstract classes only for template methods).
 
-The layering is pragmatic: **the database sits behind a port, everything else is injected directly.** The reference implementation is the LHS `contact-details` endpoint in `b2c-online-customer-onboarding-service` (`src/contexts/luminus-home-services`). When in doubt, read it and follow its shape.
+- Contracts used as dependency injection tokens (repository ports, service contracts) are abstract classes with only abstract members, not interfaces. They survive compilation, so NestJS can inject them by type (`nestjs.md` §Providers & Dependency Injection).
+- Everything else follows `typescript.md` §5 and §16 as written.
 
-- Dependency injection, error handling and testing follow `rules/nestjs.md`.
+---
+
+## 3. Unit Tests Mock Every Dependency
+
+Overrides: `nestjs.md` §Testing (adds to it) and `mongodb.md` §13 (testing against a real MongoDB).
+
+- Unit test each provider (controllers, use cases, services, repositories, guards, pipes) in isolation by mocking **all** injected dependencies using custom providers with `useValue: mockService`. This includes Mongoose models, provided via `getModelToken(Model.name)`.
+- Set up mock behavior with `jest.spyOn(mockService, 'method').mockResolvedValue(...)`. Never call `.mockResolvedValue()` directly on the mock object. Never type mocks as `jest.Mocked<T>`.
+- Assert the full call payloads sent to mocked dependencies where feasible, including query filters and nested objects.
+
+Repositories:
+
+- Unit test repositories with the Mongoose model mocked, not against a real MongoDB.
+- Assert the exact query filter, update document and options (e.g. `runValidators: true`, `new: true`) passed to the model, not only the return value.
+- Build the documents a mock returns with the real schema (`new SessionModel({...})`), so mapping runs against real hydrated documents.
+- Cover the missing-record path (the model resolves `null`) for every update.
+- Isolate tests: reset mocks between tests.
+
+---
+
+## 4. N-Layered Architecture
+
+Overrides: `nestjs.md` §Project Structure (feature folders with `dto/` and `interfaces/`). Never import Mongoose or the MongoDB driver outside `infrastructure/`.
+
+These rules govern the layering of NestJS backend services. The layering is pragmatic: **the database sits behind a port, everything else is injected directly.** The reference implementation is the LHS `contact-details` endpoint in `b2c-online-customer-onboarding-service` (`src/contexts/luminus-home-services`). When in doubt, read it and follow its shape.
+
+- Dependency injection, error handling and testing follow `rules/nestjs.md` and §3 of this file.
 - Database code follows `rules/mongodb.md`.
 
----
-
-## 1. Layers and Folders
+### 4.1 Layers and Folders
 
 Each bounded context lives in `src/contexts/<context>/`, with its Nest module at the root of that folder.
 
@@ -34,7 +138,7 @@ Shared code lives outside the contexts: `src/shared/` (including shared service 
 
 ---
 
-## 2. Dependency Direction
+### 4.2 Dependency Direction
 
 ```
 presentation  →  application  →  domain
@@ -50,11 +154,11 @@ presentation  →  application  →  domain
 
 ---
 
-## 3. Building an Endpoint
+### 4.3 Building an Endpoint
 
 Follow this flow for every new endpoint.
 
-### 3.1 Controller
+#### 4.3.1 Controller
 
 - Define the HTTP route and its Swagger, auth, error and response decorators (`@ApiOperation`, `@UseGuards`, `@UseFilters`, `@ResponseValidator`, ...).
 - Validate request DTOs at the boundary (`ValidationPipe` with `transform`, `whitelist`, `forbidNonWhitelisted`).
@@ -78,7 +182,7 @@ public async saveContactDetails(
 }
 ```
 
-### 3.2 Use Case
+#### 4.3.2 Use Case
 
 - One class per user intent, named `<Verb><Noun>UseCase`, with a single public `execute()` method.
 - Takes typed inputs from `application/types/`.
@@ -116,7 +220,7 @@ export class UpdateLhsContactDetailsUseCase {
 }
 ```
 
-### 3.3 Repository Port and Adapter
+#### 4.3.3 Repository Port and Adapter
 
 - Declare database operations on the **port**: an abstract class in `application/ports/`, named after the entity by intent (`LhsSessionsRepository`), never after the technology. The response shape the application returns is defined next to it (`LhsSessionResponse`).
 - Implement the port in the **adapter** in `infrastructure/<store>/`, named `<Tech><Port>` (`MongoLhsSessionsRepository`).
@@ -134,12 +238,12 @@ export abstract class LhsSessionsRepository {
 }
 ```
 
-### 3.4 Return Path
+#### 4.3.4 Return Path
 
 - Return the repository result through the use case to the controller.
 - Let the controller's response validator and HTTP exception filters enforce the API response contract.
 
-### 3.5 Wiring
+#### 4.3.5 Wiring
 
 - Register new use cases and providers in the owning Nest module.
 - Bind ports with `{ provide: Port, useClass: Adapter }`, and existing contracts with `useExisting` (e.g. `{ provide: CmsService, useExisting: SanityService }`).
@@ -147,7 +251,7 @@ export abstract class LhsSessionsRepository {
 
 ---
 
-## 4. Errors
+### 4.4 Errors
 
 - Follow `rules/nestjs.md` (§Exception Filters, §Error Handling in Services): throw exceptions and let the exception filters map them to HTTP responses.
 - Do not return `Result<T, E>` / `Either` types.
@@ -155,9 +259,9 @@ export abstract class LhsSessionsRepository {
 
 ---
 
-## 5. Tests per Layer
+### 4.5 Tests per Layer
 
-Mocking follows `rules/nestjs.md` §Testing: every injected dependency is mocked.
+Mocking follows §3: every injected dependency is mocked.
 
 | Layer      | Cover                                                       |
 |------------|-------------------------------------------------------------|
@@ -168,7 +272,7 @@ Mocking follows `rules/nestjs.md` §Testing: every injected dependency is mocked
 
 ---
 
-## 6. Naming
+### 4.6 Naming
 
 | Concept              | Convention                     | Example                         |
 |----------------------|--------------------------------|---------------------------------|
@@ -185,7 +289,7 @@ Files use kebab-case with a type suffix: `update-lhs-contact-details.use-case.ts
 
 ---
 
-## 7. Not Adopted from Clean Architecture
+### 4.7 Not Adopted from Clean Architecture
 
 Do **not** apply these, even if another rules file suggests them:
 
@@ -196,7 +300,7 @@ Do **not** apply these, even if another rules file suggests them:
 
 ---
 
-## 8. Common Violations — Flag These
+### 4.8 Common Violations — Flag These
 
 - A Mongoose model, schema or repository adapter imported outside `infrastructure/` or the module.
 - A controller with business rules or persistence, or one that calls more than one use case.
