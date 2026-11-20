@@ -10,15 +10,15 @@ In a luminus project, this file **overrides** the technology rules files (`types
 
 ## 1. No Optional Properties
 
-Overrides: `typescript.md` §10, `nestjs.md` §DTOs & Validation (`PartialType`), §OpenAPI & Swagger (`@ApiPropertyOptional()`) and §Pipes (`DefaultValuePipe`), `mongodb.md` §3, and `react-next.md` §3 (optional props).
+Overrides: `typescript.md` §10, `nestjs.md` §DTOs & Validation (`PartialType`), §OpenAPI & Swagger (`@ApiPropertyOptional()`) and §Pipes (`DefaultValuePipe`), `mongodb.md` §3, §12 and §14 (migrating a new discriminator key), and `react-next.md` §3 (optional props).
 
 ### 1.1 TypeScript
 
-- **Do not write optional properties (`prop?: T`).** Give every property a sensible default instead (`''`, `[]`, `0`, `false`, an explicit enum member such as `'NONE'`), and make the type required.
+- **Do not write optional properties (`prop?: T`).** Give every property a sensible default instead (`''`, `[]`, `0`, `false`; for a string enum or literal union too, `''`, e.g. `Segment | ''`), and make the type required.
 - Don't get around this with `prop: T | undefined`, `Partial<T>` or a type that only adds the field in some cases. Those are optionals too.
 - When variants differ (e.g. one segment has fields the other lacks), prefer one shape that always has every field, with the field defaulted where it doesn't apply, over separate variants with optional fields. This is the case even if the field has no meaning for some variants.
 - Set the default **once, at the boundary** where data comes in (request DTO, response of an external API, database read). From there inward the type is required and the code needs no `??` or `?.` for that field.
-- When an external source may leave a field out, type only the raw response as partial, and map it straight away to the required internal type:
+- When an external source may leave a field out, type only the raw response as partial, and map it straight away to the required internal type. For an upstream API response, do this with a validated response DTO (§5):
 
 ```typescript
 // ❌ optional leaks into the domain, every reader needs ?? '' or ?.
@@ -73,6 +73,7 @@ companyName!: string;
 
 - Give each field that may be left out a schema `default` (`''`, `[]`, `false`, ...), so that it is required in the document interface.
 - When documents written before the field existed don't have it, default it in the repository on read.
+- For a discriminator key (`mongodb.md` §14) that documents written before it existed don't have, put the default on the base schema (`default: <legacy variant>`) instead of in the repository. Mongoose picks the variant schema while it loads the document, before the repository sees it. Overrides the migration of `mongodb.md` §14 and §12.
 - Ask the user before leaving a field optional.
 
 ### 1.4 React props
@@ -311,3 +312,61 @@ Do **not** apply these, even if another rules file suggests them:
 - An update that ignores a missing record or omits `runValidators: true`.
 - A repository that leaks `_id`, `__v` or other storage metadata to the response.
 - A new use case or provider that is not registered in the owning module.
+
+---
+
+## 5. Validate Upstream Responses
+
+Adds to: `nestjs.md` §DTOs & Validation (which covers only incoming requests) and `typescript.md` §12 (no `as` cast on an upstream response).
+
+Overrides: `nestjs.md` §Exception Filters ("throw built-in `HttpException` subclasses, never raw `Error` objects into HTTP routes") and §Error Handling in Services (pass `{ cause }` to the `HttpException`). An invalid upstream response is thrown as a `CustomError` instead, which extends `Error`, so that every upstream failure is logged in one structured, queryable shape and answered with the same 502 body.
+
+The response of an upstream API (customer service, ...) is untrusted input, just like a request body. Validate it where it comes in, in the client that calls the API, before any other code sees it. A missing field should fail there, loudly, as a 502. It should not slip through and cause a `TypeError` somewhere further down.
+
+- **Check real data first.** Before writing the response DTO, call the API for real customers (several segments and states, from a non-production environment) and note which fields are always present and which are sometimes missing, `null` or empty. The upstream Swagger or TypeScript types are not enough. If you can't call the API, ask the user for real sample responses.
+- **Write a response DTO class** for the upstream response, following §1.2:
+  - Fields that real data shows may be missing, and that we can do without, are required on the DTO with a default from `@Transform` (`''`, `[]`, ...).
+  - Fields we need get no default. If they are missing, validation fails.
+- **Run it through the validator** in the client: `plainToInstance` and then `validateSync`. Don't cast the raw response with `as`.
+- **Throw a `CustomError`** (`src/exceptions/custom-error.exception-filter.ts`) when validation fails, as the other upstream clients do:
+  - The source is the upstream's `ErrorSources` entry, and the method is the client method's name. Add an entry when the upstream has none.
+  - Put the errors in the payload as `{ error: '<upstream>-validation-errors', validationErrors: flattenValidationErrors(errors) }` (`flattenValidationErrors` from `@luminus/microservices-common`).
+  - `CustomErrorExceptionFilter` logs `{ source, method, payload }` and answers with the status of the source's `case`. Give a new source a `case` that answers 502 with `{ message: 'response.validation-failed' }`. Without a `case`, the filter answers 500.
+  - Every controller whose route can reach the client must list `CustomErrorExceptionFilter` in `@UseFilters`. Without it, Nest answers 500 and logs nothing useful.
+  - The validation errors are logged, never sent to our client.
+- Don't throw a `BadGatewayException` for this. No filter logs an `HttpException`, so its `cause` never reaches the logs.
+- Return the validated DTO's values as the internal type. From there inward every field is present, with no `??` or `?.` (§1.1).
+
+```ts
+// ❌ cast: a missing field surfaces later as a TypeError in a use case
+const customer = (await this.http.get(url)).data as Customer;
+
+// ✅ response DTO: default what may be missing, require what we need
+export class CustomerResponseDto {
+  @IsString()
+  @IsNotEmpty()
+  customerNumber!: string; // required: no default
+
+  @Transform(({ value }: { value: unknown }) => value ?? [])
+  @ValidateNested({ each: true })
+  @Type(() => ContactPersonResponseDto)
+  contactPersons!: ContactPersonResponseDto[]; // missing for some customers
+}
+
+// ✅ in the client: validate, or throw a CustomError (the filter logs it and answers 502)
+const customer = plainToInstance(CustomerResponseDto, (await this.http.get(url)).data);
+const validationErrors = flattenValidationErrors(validateSync(customer, { whitelist: true }));
+if (validationErrors.length > 0) {
+  throw new CustomError(ErrorSources.B2CCustomerMicroservice, 'getCustomerDetails', {
+    error: 'customer-validation-errors',
+    validationErrors,
+  });
+}
+return customer;
+
+// ✅ in each controller that reaches the client
+@UseFilters(AxiosExceptionFilter, CustomErrorExceptionFilter)
+```
+
+- Test the client with a mocked HTTP call (§3): a full response passes, a response without an optional field gets the default, and a response without a required field throws a `CustomError` with the source, method and flattened validation errors.
+- Test the filter `case` (the source answers 502), and test a route that reaches the client: a `CustomError` from the client gives a 502, not a 500.

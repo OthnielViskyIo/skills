@@ -230,7 +230,59 @@ try {
 
 ---
 
-## 14. Things to Never Do
+## 14. Discriminators
+
+- Store variants of one entity in one collection and tell them apart with a discriminator key. Keep the fields that all variants share on the base schema.
+- When only one part of the document differs between variants, put the discriminator on that subdocument (`schema.path('details').discriminator(...)`), not on the whole document. You get one model per collection and one document type, and the variant fields narrow by the key without `as` casts.
+
+```typescript
+@Schema({ _id: false, strict: "throw", discriminatorKey: "kind" })
+export class PaymentDetailsModel {
+    @Prop({ type: String, enum: PaymentKind, required: true })
+    kind!: PaymentKind;
+}
+export const PaymentDetailsSchema = SchemaFactory.createForClass(PaymentDetailsModel);
+
+@Schema({ timestamps: true, strict: "throw" })
+export class OrderModel {
+    @Prop({ type: PaymentDetailsSchema, required: true })
+    paymentDetails!: CardPaymentModel | InvoicePaymentModel; // narrows on paymentDetails.kind
+}
+export const OrderSchema = SchemaFactory.createForClass(OrderModel);
+
+const paymentDetails = OrderSchema.path<MongooseSchema.Types.Subdocument>("paymentDetails");
+paymentDetails.discriminator(PaymentKind.CARD, CardPaymentSchema);
+paymentDetails.discriminator(PaymentKind.INVOICE, InvoicePaymentSchema);
+
+// ❌ a model per variant, injected next to the base model
+@InjectModel(CardOrderModel.name) cardOrders: Model<OrderModel & CardOrderModel>
+// ✅ one model, Mongoose picks the variant schema
+@InjectModel(OrderModel.name) orders: Model<OrderModel>
+```
+
+- Declare the discriminator key on the base schema only. The variant schemas leave it out; in TypeScript they narrow it to their literal value (`kind!: PaymentKind.CARD`).
+- Always set the key when you create a document. Without it, Mongoose uses the base schema and the variant's fields and defaults are lost.
+- **Updates on variant paths need the key value in the filter or the update.** Mongoose uses it to pick the schema for casting. Without it, a strict schema rejects the path (`Field 'paymentDetails.cardNumber' is not in schema`).
+
+```typescript
+// ❌ StrictModeError: Mongoose doesn't know which variant
+orders.findOneAndUpdate({ _id }, { $set: { "paymentDetails.cardNumber": number } });
+
+// ✅ key in the filter: also guards against updating another variant
+orders.findOneAndUpdate(
+    { _id, "paymentDetails.kind": PaymentKind.CARD },
+    { $set: { "paymentDetails.cardNumber": number } },
+    { returnDocument: "after", runValidators: true },
+);
+```
+
+- Operators like `$in`, `$exists` or `$or` on the key don't count. Mongoose only reads a plain value.
+- When you introduce a discriminator key on existing documents, they don't have it, so they load with the base schema. Migrate them (§12), and until then match them on another field and set the key in the update.
+- Test update casting against the real schema. A mocked model can't catch a missing key value.
+
+---
+
+## 15. Things to Never Do
 
 - Never run `updateMany` or `deleteMany` with an empty filter in application code.
 - Never pass unvalidated request data into a query filter.
