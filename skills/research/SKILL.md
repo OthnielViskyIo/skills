@@ -48,7 +48,7 @@ What the user does and sees, step by step, in the part of the flow this ticket t
 The end-to-end flow, as numbered steps or a small text diagram. For each step: what happens, which system or data is involved, and which ticket covers it. Mark the steps this ticket covers.
 
 ## Scope
-What this ticket does and what it leaves to other tickets or teams.
+What this ticket does and what it leaves to other tickets or teams. If the ticket has subtasks, list each with what it covers: planning may turn them into separate PRs.
 
 ## Technical remarks
 Only if needed: facts about today's code or data that change how the flow or scope should be understood, with file paths. Skip otherwise.

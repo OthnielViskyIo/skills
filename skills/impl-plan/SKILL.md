@@ -11,7 +11,7 @@ Write the implementation plan for [story]. It comes after `/pre-refinement` and 
 
 The implementation is done with `/tdd`, unless the user says otherwise. Shape the plan for it: vertical slices, each with the behavior it adds and the seam it is tested at.
 
-This is planning only: don't edit code, change the ticket or post to Jira. Leave out git commits and pushes, e2e tests and deployment unless the user asks for them.
+This is planning only: don't edit code, run git commands, change the ticket or post to Jira. Leave out pushes, e2e tests and deployment unless the user asks for them. Do plan how the work splits into PRs and commits (see "Split the work").
 
 Two standing rules:
 
@@ -34,6 +34,14 @@ Close them with `/grilling`: one question at a time, each with your recommended 
 
 The note has no "open points" section. If a decision can't be made yet, stop and tell the user what is blocking, instead of writing a plan with gaps.
 
+## Split the work
+
+Keep each PR small enough to review: a PR with dozens of changed files (60+) is too big. Propose the split during grilling and let the user confirm it.
+
+- **Subtasks → PRs:** when the ticket has subtasks that can each be built, reviewed and merged on their own, each becomes its own PR on its own branch. Order the PRs, and say which PR builds on which.
+- **Natural seams → commits:** inside a PR, group the steps into commits where the change naturally splits, e.g. a preparatory refactor, a new contract, the behavior behind it, the wiring. Each commit leaves the code compiling and the tests passing. A branch normally gets several commits.
+- **Don't split for its own sake:** a small change stays one PR, a tightly coupled change stays one commit. If subtasks are too small or too entangled to review apart, keep them in one PR and say why.
+
 ## Agree on verification
 
 Once the gaps are closed, propose a numbered list of checks the user can do themselves to confirm the implementation is correct. For example: which endpoint to try in Swagger, with what input and expected response; how to test the flow by hand in the browser; which data to look at in the database. Each item says what to check, how, and what result to expect. Mark the ones you recommend and say why. The user makes the final decision: wait for them to accept, drop, change or add items, and only put the agreed list in the note.
@@ -52,7 +60,7 @@ No H1: Obsidian shows the file name as the title. Use this structure:
 Implementation plan for **<KEY>: <ticket title>**. Builds on [[<research note>]]. Part of [[<parent plan or note>]], if there is one.
 
 - Repo: `<repo>`
-- Branch: `<proposed branch name>`
+- Branch: `<proposed branch name>`, or one per PR in Split
 - Status: planned
 - Out of scope: what this plan deliberately leaves to other tickets or teams
 
@@ -66,6 +74,10 @@ What exists when the plan is done, in 2-4 sentences: the behavior, and the contr
 1. **Slice name.** The behavior this slice adds, the files it creates or changes, and the existing pattern to follow. Seam: where it is tested and the cases that prove it.
 2. ...
 
+## Split
+- **PR 1** `<branch>` (<subtask key>, if any): steps 1-3. Commits: steps 1-2 "<commit message>"; step 3 "<commit message>".
+- **PR 2** `<branch>`, builds on PR 1: ...
+
 ## Verification
 1. A check agreed with the user: what to check, how, and the expected result.
 2. ...
@@ -74,6 +86,7 @@ What exists when the plan is done, in 2-4 sentences: the behavior, and the contr
 - [ ] A check the implementer runs to confirm their own work, e.g. a command (tests, typecheck, lint, build) and the result it must give
 ```
 
+- **Split** lists the PRs and the commits of each, as agreed in "Split the work". For a single PR, list only its commits.
 - **Verification** is for the user: manual checks to confirm the implementation is correct, as agreed in "Agree on verification".
 - **Definition of done** is for the implementer: the checks to run before calling the work finished. You set these yourself; they don't need the user's agreement.
 - **Steps** are ordered so each one builds on the previous and leaves the code working. Each step is one `/tdd` slice or a small group of them, at a seam confirmed during grilling. Steps that aren't test-driven (config, wiring, migrations) say how they are verified instead.
@@ -90,7 +103,7 @@ Count words, not characters: file paths and identifiers would distort a characte
 - Target: ~500 words for a typical ticket. Don't pad to fill the cap.
 - Goal: at most 60 words. Each decision: at most 40 words.
 - Over the limit? Cut what the implementer can find in the code or in the linked notes, merge small steps, shorten. Don't compress the wording into fragments.
-- Never go over the cap. If the plan can't fit in 800 words, the ticket is probably too big: propose how to split it into separate plans.
+- Never go over the cap. If the plan can't fit in 800 words, the ticket is probably too big: propose how to split it into separate plans, e.g. one per PR.
 
 Before saving, count the words (e.g. `wc -w`) and check every limit.
 
@@ -100,4 +113,4 @@ When the user asks to update, revise or refactor the note, or new information or
 
 ## Output
 
-Save the note, then print its path and the list of steps in the chat.
+Save the note, then print its path, the list of steps and the split in the chat.

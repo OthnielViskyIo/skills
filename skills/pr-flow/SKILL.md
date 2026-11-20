@@ -9,7 +9,7 @@ Write a "flow": a short walk through the changes on the current branch, in the o
 
 ## Gather the changes
 
-1. Determine [base]. If none is given, use `main` or `master`, whichever exists.
+1. Determine [base]. If none is given, use `main` or `master`, whichever exists. If the branch builds on another PR's branch (the work is split over several PRs), ask whether to use that branch as [base], so the flow covers only this PR.
 2. Run `git log --oneline <base>..HEAD` and `git diff --stat <base>...HEAD` to see the commits and touched files.
 3. Read the full diff of the source files, and the new files in full. Read surrounding code where you need it to understand how a change is reached.
 4. If there are uncommitted changes, say so and ask whether to include them. Never include them silently.
@@ -23,6 +23,8 @@ Pick whatever gives the clearest overview:
 - Frontend: pages → components → hooks/state → API calls
 - Config, infra or scripts: files or steps in the pipeline
 - Mixed or scattered changes: group by concern
+
+When the commits follow the flow (one commit per stage), say so after the flow, so the reviewer can read the PR commit by commit.
 
 Start at the entry point (endpoint, page, job, CLI command) and follow the path to the response or side effect. Shared or refactored pieces get their own step where they are first used.
 
@@ -53,7 +55,7 @@ When the user asks to update, revise or refactor the flow, or the branch changes
 
 ## Output
 
-Print the flow in the chat, ready to paste. Then, separately, list anything you left out (unrelated commits, uncommitted changes) and anything worth checking. Don't edit the PR yourself.
+Print the flow in the chat, ready to paste. Then, separately, list anything you left out (unrelated commits, uncommitted changes) and anything worth checking. If the PR is too big to review comfortably (dozens of changed files, 60+) and splits naturally, suggest how, as separate PRs or commits. Don't suggest a split that doesn't make sense. Don't edit the PR yourself.
 
 ## Example
 

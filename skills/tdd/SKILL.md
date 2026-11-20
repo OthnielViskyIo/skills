@@ -31,4 +31,5 @@ Ask: "What's the public interface, and which seams should we test?" Give each pr
 
 - **Red before green.** Write the failing test first, then only enough code to pass it. Don't anticipate future tests or add speculative features.
 - **One slice at a time.** One seam, one test, one minimal implementation per cycle.
+- **Commits don't follow the loop.** A commit holds a group of slices and ends at a break point agreed in advance (see `/implement`), not after each red → green cycle. At a break point, stop and ask the user to verify the work before anything is committed.
 - **Refactoring is not part of the loop.** It belongs to the review stage (see `/code-review`), not the red → green implementation cycle.
